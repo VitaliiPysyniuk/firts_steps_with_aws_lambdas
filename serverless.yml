@@ -1,0 +1,74 @@
+service: firstTest
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  ecr:
+    images:
+      lambda-1-image:
+        path: ./lambda_1_source/
+      api-gateway-image:
+        path: ./api_gateway_source/
+
+
+functions:
+  api-gateway:
+    image:
+      name: api-gateway-image
+    events:
+      - http:
+          method: 'GET'
+          path: /
+
+  lambda-1:
+    image:
+      name: lambda-1-image
+    events:
+      - http:
+          method: 'GET'
+          path: /users
+      - http:
+          method: 'POST'
+          path: /users
+      - http:
+          method: 'PATCH'
+          path: /users/{user_id}
+      - http:
+          method: 'DELETE'
+          path: /users/{user_id}
+
+
+
+#functions:
+#  lambda-test-wt-framework:
+#    handler: handler.lambda_handler
+#    runtime: python3.9
+#    events:
+#      - httpApi:
+#          method: 'GET'
+#          path: /users
+#      - httpApi:
+#          method: 'POST'
+#          path: /users
+#      - httpApi:
+#          method: 'PATCH'
+#          path: /users/{user_id}
+#      - httpApi:
+#          method: 'DELETE'
+#          path: /users/{user_id}
+
+#resources:
+#  Resources:
+#    PostgresRDSInstance:
+#      Type: AWS::RDS::DBInstance
+#      Properties:
+#        DBInstanceIdentifier: test-rds-postgres-db
+#        MasterUsername: postgres
+#        MasterUserPassword: 11111111
+#        AllocatedStorage: 20
+#        DBName: postgresDB
+#        DBInstanceClass: db.t2.micro
+#        Engine: postgres
+#        EngineVersion: "13.4"
+#        PubliclyAccessible: true
