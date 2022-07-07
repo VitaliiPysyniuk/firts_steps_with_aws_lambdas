@@ -1,6 +1,7 @@
 import json
 import base64
 from urllib.parse import unquote
+import boto3
 
 
 def lambda_handler(event, context):
@@ -86,6 +87,26 @@ def lambda_handler(event, context):
     # when the button was clicked in the chat
     elif 'actions' in body:
         print('3')
+        print(body['response_url'])
+
+        data = {
+            "response_url": body['response_url'],
+            "actions": body['actions'][0]
+        }
+
+        client = boto3.client('lambda')
+
+        response = client.invoke(
+            FunctionName='arn:aws:lambda:us-east-1:047600600084:function:workers-service-lambda',
+            InvocationType='RequestResponse',
+            Payload=json.dumps(data)
+        )
+
+        print(response['StatusCode'])
+        if response['StatusCode'] != 200:
+            return {
+                'status_code': 500
+            }
 
     return {
         'status_code': 200
